@@ -1,194 +1,165 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
 public class CharacterController : MonoBehaviour
 {
-    [SerializeField] float speed;
-    private Vector2 direction;
-    private Rigidbody2D rb;
+    private const string STOP_MOVE_ANIM_TRIGGER = "Stop";
+    private const string MOVE_UP_ANIM_TRIGGER = "Up";
+    private const string MOVE_DOWN_ANIM_TRIGGER = "Down";
+    private const string MOVE_LEFT_ANIM_TRIGGER = "Left";
+    private const string MOVE_RIGHT_ANIM_TRIGGER = "Right";
 
-    private string runDirection;
-    private List<string> memRunDirection = new List<string>();
-    [SerializeField] private Animator anim;
-    private bool[] currentDirection = {false,false,false,false};
-    private Vector2 recDirection;
-
-
-
-    void Start()
+    private enum MoveDirections
     {
-        rb = GetComponent<Rigidbody2D>();
-        //memRunDirection = new string[4] {"","","",""};
+        Up,
+        Down,
+        Left,
+        Right,
     }
 
-    void Update()
+    [SerializeField] private float _speed = 4f;
+    [SerializeField] private Animator _animator;
+
+    private Rigidbody2D _rb;
+    private Vector2 _direction;
+    private MoveDirections _currentMoveInputDirection;
+    private List<MoveDirections> _moveInputDirections = new List<MoveDirections>();
+
+    private void Start()
     {
-        //direction = new Vector2(0, 0);
-        //
+        _rb = GetComponent<Rigidbody2D>();
+    }
+
+    private void Update()
+    {
+        MoveInputKeyUpHandler();
+
+        MoveInputKeyDownHandler();
+        
+        MoveHandler();
+
+        _direction.Normalize();
+    }
+
+    private void FixedUpdate()
+    {
+        _rb.velocity = _direction * _speed;
+    }
+
+    private void MoveInputKeyUpHandler()
+    {
         if(Input.GetKeyUp("w"))
         {
-            memRunDirection.Remove("up");
-            if(memRunDirection.Count() > 0)
-            {
-                runDirection = memRunDirection.Last();
-            }else
-            {
-                if(!StateNameController.isPaused)
-                {
-                    anim.SetTrigger("Stop");
-                }
-                direction = new Vector2(0, 0);
-            }
-            
+            _moveInputDirections.Remove(MoveDirections.Up);
+            UpdateMoveInput();
         }
 
         if(Input.GetKeyUp("s"))
         {
-            memRunDirection.Remove("down");
-            if(memRunDirection.Count() > 0)
-            {
-                runDirection = memRunDirection.Last();
-            }else
-            {
-                if(!StateNameController.isPaused)
-                {
-                    anim.SetTrigger("Stop");
-                }
-                direction = new Vector2(0, 0);
-            }
+            _moveInputDirections.Remove(MoveDirections.Down);
+            UpdateMoveInput();
         }
 
         if(Input.GetKeyUp("a"))
         {
-            memRunDirection.Remove("left");
-            if(memRunDirection.Count() > 0)
-            {
-                runDirection = memRunDirection.Last();
-            }else
-            {
-                if(!StateNameController.isPaused)
-                {
-                    anim.SetTrigger("Stop");
-                }
-                direction = new Vector2(0, 0);
-            }
+            _moveInputDirections.Remove(MoveDirections.Left);
+            UpdateMoveInput();
         }
 
         if(Input.GetKeyUp("d"))
         {
-            memRunDirection.Remove("right");
-            if(memRunDirection.Count() > 0)
-            {
-                runDirection = memRunDirection.Last();
-            }else
-            {
-                if(!StateNameController.isPaused)
-                {
-                    anim.SetTrigger("Stop");
-                }
-                direction = new Vector2(0, 0);
-            }
+            _moveInputDirections.Remove(MoveDirections.Right);
+            UpdateMoveInput();
         }
-        //
+    }
 
+    private void MoveInputKeyDownHandler()
+    {
         if(Input.GetKeyDown("w"))
         {
-            runDirection = "up";
-            memRunDirection.Add("up");
-            if(!StateNameController.isPaused)
-            {
-                anim.SetTrigger("Up");
-            }
+            AddMoveInput(MoveDirections.Up, MOVE_UP_ANIM_TRIGGER);
         }
 
         if(Input.GetKeyDown("s"))
         {
-            runDirection = "down";
-            memRunDirection.Add("down");
-            if(!StateNameController.isPaused)
-            {
-                anim.SetTrigger("Down");
-            }
-            
+            AddMoveInput(MoveDirections.Down, MOVE_DOWN_ANIM_TRIGGER);
         }
 
         if(Input.GetKeyDown("a"))
         {
-            runDirection = "left";
-            memRunDirection.Add("left");
-            if(!StateNameController.isPaused)
-            {
-                anim.SetTrigger("Left");
-            }
-            
+            AddMoveInput(MoveDirections.Left, MOVE_LEFT_ANIM_TRIGGER);
         }
 
         if(Input.GetKeyDown("d"))
         {
-            runDirection = "right";
-            memRunDirection.Add("right");
-            if(!StateNameController.isPaused)
-            {
-                anim.SetTrigger("Right");
-            }
-            
+            AddMoveInput(MoveDirections.Right, MOVE_RIGHT_ANIM_TRIGGER);
         }
-
-        if(Input.GetKey("w") && runDirection == "up")
-        {
-            if(direction != new Vector2(0, 1) && !StateNameController.isPaused)
-            {
-                anim.SetTrigger("Up");
-                //bool[] currentDirection =  {true,false,false,false};
-            }
-            direction = new Vector2(0, 1);
-        }
-
-        if(Input.GetKey("s") && runDirection == "down")
-        {
-            if(direction != new Vector2(0, -1) && !StateNameController.isPaused)
-            {
-                anim.SetTrigger("Down");
-                //bool[] currentDirection =  {false,true,false,false};
-            }
-            direction = new Vector2(0, -1);
-        }
-
-        if(Input.GetKey("a") && runDirection == "left")
-        {
-            if(direction != new Vector2(-1, 0) && !StateNameController.isPaused)
-            {
-                anim.SetTrigger("Left");
-                //bool[] currentDirection =  {false,false,true,false};
-            }
-            direction = new Vector2(-1, 0);
-        }
-
-        if(Input.GetKey("d") && runDirection == "right")
-        {
-            if(direction != new Vector2(1, 0) && !StateNameController.isPaused)
-            {
-                anim.SetTrigger("Right");
-                //bool[] currentDirection =  {false,false,false,true};
-            }
-            direction = new Vector2(1, 0);
-            
-        }
-        direction.Normalize();
     }
 
-    void FixedUpdate()
+    private void MoveHandler()
     {
-        rb.velocity = direction * speed;
+        if(Input.GetKey("w") && _currentMoveInputDirection == MoveDirections.Up)
+        {
+            UpdateMoveVector(Vector2.up, MOVE_UP_ANIM_TRIGGER);
+        }
+
+        if(Input.GetKey("s") && _currentMoveInputDirection == MoveDirections.Down)
+        {
+            UpdateMoveVector(Vector2.down, MOVE_DOWN_ANIM_TRIGGER);
+        }
+
+        if(Input.GetKey("a") && _currentMoveInputDirection == MoveDirections.Left)
+        {
+            UpdateMoveVector(Vector2.left, MOVE_LEFT_ANIM_TRIGGER);
+        }
+
+        if(Input.GetKey("d") && _currentMoveInputDirection == MoveDirections.Right)
+        {
+            UpdateMoveVector(Vector2.right, MOVE_RIGHT_ANIM_TRIGGER);
+        }
     }
 
-    void OnApplicationFocus(bool hasFocus)
+    private void UpdateMoveInput()
     {
-        anim.SetTrigger("Stop");
-        memRunDirection.Clear();
+        if(_moveInputDirections.Count() > 0)
+        {
+            _currentMoveInputDirection = _moveInputDirections.Last();
+        }
+        else
+        {
+            _direction = new Vector2(0, 0);
+
+            if(!StateNameController.IsGamePaused)
+            {
+                _animator.SetTrigger(STOP_MOVE_ANIM_TRIGGER);
+            }
+        }
+    }   
+
+    private void AddMoveInput(MoveDirections direction, string animTrigger)
+    {
+        _currentMoveInputDirection = direction;
+
+        _moveInputDirections.Add(direction);
+        if(!StateNameController.IsGamePaused)
+        {
+            _animator.SetTrigger(animTrigger);
+        }
     }
 
+    private void UpdateMoveVector(Vector2 moveVector, string animTrigger)
+    {
+        if(_direction != moveVector && !StateNameController.IsGamePaused)
+        {
+            _animator.SetTrigger(animTrigger);
+        }
+        _direction = moveVector;
+    }
 
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        _animator.SetTrigger(STOP_MOVE_ANIM_TRIGGER);
+        _moveInputDirections.Clear();
+    }
 }

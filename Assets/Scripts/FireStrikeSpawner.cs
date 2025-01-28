@@ -1,68 +1,57 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FireStrikeSpawner : MonoBehaviour
 {
-   [SerializeField] private float leftBorder;
-   [SerializeField] private float rightBorder;
-   [SerializeField] private float upBorder;
-   [SerializeField] private float downBorder;
-   [SerializeField] private float delta;
+   [SerializeField] private float _leftBorder = -8.5f;
+   [SerializeField] private float _rightBorder = 8.5f;
+   [SerializeField] private float _upBorder = 4.5f;
+   [SerializeField] private float _downBorder = -4.5f;
+   [SerializeField] private float _delta = 3;
+   [SerializeField] private GameObject _fireStrikePref;
 
-   [SerializeField] private GameObject fireStrikePref;
-   private Vector3 spawnPosition;
-   private int numOfFireStrike = 1;
-   private GameObject player;
+   private Vector3 _spawnPosition;
+   private int _numOfFireStrike = 1;
+   private GameObject _player;
 
-   void Start()
+   private void Start()
    {
         StartCoroutine(SpawnFireStrike(3f));
-        //Instantiate(fireStrikePref,new Vector3(0f,4.5f,0f), Quaternion.identity);
-        player = GameObject.FindWithTag("Player");
+        _player = GameObject.FindWithTag("Player");
    }
 
     private IEnumerator SpawnFireStrike(float interval)
     {
         yield return new WaitForSeconds(interval);
         
-        for(int i = 0;i < numOfFireStrike;i++)
+        for(int i = 0;i < _numOfFireStrike;i++)
         {
             GetPosition();
-            Instantiate(fireStrikePref,spawnPosition, Quaternion.identity);
+            Instantiate(_fireStrikePref,_spawnPosition, Quaternion.identity);
         }
         
         StartCoroutine(SpawnFireStrike(3f));
-
     }
 
     private void GetPosition()
     {
-        float leftSide = player.transform.position.x - delta;
-        if(leftSide < leftBorder)
-        {
-            leftSide = leftBorder;
-        }
-        float rightSide = player.transform.position.x + delta;
-        if(rightSide > rightBorder)
-        {
-            rightSide = rightBorder;
-        }
-        float downSide = player.transform.position.y - delta;
-        if(downSide < downBorder)
-        {
-            downSide = downBorder;
-        }
-        float upSide = player.transform.position.y + delta;
-        if(upSide > upBorder)
-        {
-            upSide = upBorder;
-        }
-        
+        float border;
+
+        border = _player.transform.position.x - _delta;
+        float leftSide = border < _leftBorder ? _leftBorder : border;
+
+        border = _player.transform.position.x + _delta;
+        float rightSide = border > _rightBorder ? _rightBorder : border;
+
+        border = _player.transform.position.y - _delta;
+        float downSide = border < _downBorder ? _downBorder : border;
+
+        border = _player.transform.position.y + _delta;
+        float upSide = border > _upBorder ? _upBorder : border;
 
         float xPosition = Random.Range(leftSide, rightSide);
         float yPosition = Random.Range(downSide, upSide);
         
-        spawnPosition = new Vector3(xPosition, yPosition, 0f);
+        _spawnPosition = new Vector3(xPosition, yPosition, 0f);
     }
 }

@@ -174,9 +174,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26e8cf28a3e6b784ea3d68174745bbd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  splashRange: 1.25
-  speed: 2.3
-  hitSound: {fileID: 1520529829161292495}
+  _splashRange: 1.25
+  _speed: 2.3
+  _hitSound: {fileID: 1520529829161292495}
 --- !u!82 &1520529829161292495
 AudioSource:
   m_ObjectHideFlags: 0

@@ -1,20 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
 public class Gift : MonoBehaviour
 {
-    [SerializeField] private GameObject floatingText;
+    [SerializeField] private GameObject _floatingText;
 
-    void OnTriggerEnter2D(Collider2D col)
+    private GiftSpawner _giftSpawner;
+
+    public void Initialize(GiftSpawner giftSpawner)
     {
-        if(col.CompareTag("Player"))
+        _giftSpawner = giftSpawner;
+    }
+
+    private void OnTriggerEnter2D(Collider2D colloder)
+    {
+        if(colloder.CompareTag(GameController.PLAYER_GAME_OBJECT_TAG))
         {
-            GameObject effect = Instantiate(floatingText, gameObject.transform.position, Quaternion.identity);
+            _giftSpawner.TakeGift();
+            
+            GameObject effect = Instantiate(_floatingText, gameObject.transform.position, Quaternion.identity);
             Destroy(effect, 0.5f);
-            GameObject.Find("Gift Spawner").GetComponent<GiftSpawner>().TakeGift();
+
             Destroy(gameObject);
         }
     }

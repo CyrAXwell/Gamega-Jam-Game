@@ -126,9 +126,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0653925b43577714ea93b0ad6e776761, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  brokenBlock: {fileID: 7484284450334517915}
-  anim: {fileID: 1423015871282711765}
-  brokenEffect: {fileID: 3717632721251877583, guid: 419027cd0e1b1924f9f6001bfc2e755a, type: 3}
+  _brokenBlock: {fileID: 7484284450334517915}
+  _animator: {fileID: 1423015871282711765}
+  _brokenEffect: {fileID: 3717632721251877583, guid: 419027cd0e1b1924f9f6001bfc2e755a, type: 3}
 --- !u!95 &1423015871282711765
 Animator:
   serializedVersion: 4

@@ -1,66 +1,44 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
 public class GiftSpawner : MonoBehaviour
 {
-    [SerializeField] private Sprite[] giftIcons;
-    [SerializeField] private GameObject gift;
-    [SerializeField] private GameObject[] tiles;
-    private int activeTile = 62;
-    private Vector3 spawnPosition;
+    [SerializeField] private Sprite[] _giftIcons;
+    [SerializeField] private GameObject _gift;
+    [SerializeField] private GameObject[] _tiles;
+    [SerializeField] private TMP_Text _scoreDisplay;
+    [SerializeField] private AudioSource _takeGiftSound;
 
-    [SerializeField] private TMP_Text scoreDisplay;
-    private float score = 0;
-    [SerializeField] AudioSource takeGiftSound;
+    private int _activeTile = 62;
+    private float _score = 0;
 
-    void Start()
+    private void Start()
     {
-
-        scoreDisplay.text = "—чет:0";
+        _scoreDisplay.text = "—чет:0";
         SpawnGift();
-        // GameObject newGift = Instantiate(gift,new Vector3(0.5f, 0.5f, 0f), Quaternion.identity);
-        // newGift.transform.GetComponent<SpriteRenderer>().sprite = giftIcons[Random.Range(0,3)];
-    }
-
-
-    void Update()
-    {
-        
     }
 
     public void TakeGift()
     {
-        takeGiftSound.Play();
-        score++;
-        scoreDisplay.text = "—чет:" + score;
+        _takeGiftSound.Play();
+        _score++;
+        _scoreDisplay.text = "—чет:" + _score;
         SpawnGift();
     }
 
     public void SpawnGift()
     {
-        int i = Random.Range(0,(int)tiles.Length);
-        if(i == activeTile && i < tiles.Length-1)
+        int i = Random.Range(0,(int)_tiles.Length);
+        if(i == _activeTile)
         {
-            i++;
-        }
-        if(i == activeTile && i >= tiles.Length-1)
-        {
-            i--;
+            i = i < _tiles.Length - 1 ? i++ : i--;
         }
 
-        activeTile = i;
-        spawnPosition = tiles[activeTile].transform.position + new Vector3(0f,0.1f,0f);
-        GameObject newGift = Instantiate(gift,spawnPosition, Quaternion.identity);
-        newGift.transform.GetComponent<SpriteRenderer>().sprite = giftIcons[Random.Range(0,3)];
+        _activeTile = i;
+        Vector3 spawnPosition = _tiles[_activeTile].transform.position + new Vector3(0f,0.1f,0f);
 
-        // for(int i=0;i<tiles.Length;i++)
-        // {
-        //     spawnPosition = tiles[i].transform.position + new Vector3(0f,-0.1f,0f); 
-        //     GameObject newGift = Instantiate(gift,spawnPosition, Quaternion.identity);
-        //     newGift.transform.GetComponent<SpriteRenderer>().sprite = giftIcons[Random.Range(0,3)];
-        // }
+        GameObject newGift = Instantiate(_gift, spawnPosition, Quaternion.identity);
+        newGift.GetComponent<Gift>().Initialize(this);
+        newGift.GetComponent<SpriteRenderer>().sprite = _giftIcons[Random.Range(0,3)];
     }
 }

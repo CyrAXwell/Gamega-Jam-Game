@@ -1,23 +1,20 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FireSrike : MonoBehaviour
 {
-    [SerializeField] private float splashRange;
-    [SerializeField] private float speed;
-    private GameObject player;
-    private GameObject gift;
-    private bool canMove = true;
-    private bool canDamage = false;
-    [SerializeField] AudioSource hitSound;
-    private bool isPlayerHit = false;
+    [SerializeField] private float _splashRange = 1.25f;
+    [SerializeField] private float _speed = 2.3f;
+    [SerializeField] AudioSource _hitSound;
 
-
+    private GameObject _player;
+    private bool _canMove = true;
+    private bool _canDamage = false;
+    private bool _isPlayerHit = false;
 
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
+        _player = GameObject.FindGameObjectWithTag(GameController.PLAYER_GAME_OBJECT_TAG);
         StartCoroutine(StopMove(1.3f));
         StartCoroutine(ExplosionDamage(1.8f));
         StartCoroutine(StopDamage(2.1f));
@@ -26,26 +23,28 @@ public class FireSrike : MonoBehaviour
 
     void Update()
     {
-        if(canMove)
+        if(_canMove)
         {
-            //gift = GameObject.FindGameObjectWithTag("Gift");
-            transform.position = Vector2.MoveTowards(gameObject.transform.position, player.transform.position, speed * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(gameObject.transform.position, _player.transform.position, _speed * Time.deltaTime);
         }
-        if(canDamage)
+
+        if(_canDamage)
         {
-            var hitColliders = Physics2D.OverlapCircleAll(new Vector2(transform.position.x, transform.position.y), splashRange);
+            var hitColliders = Physics2D.OverlapCircleAll(new Vector2(transform.position.x, transform.position.y), _splashRange);
             foreach(var hitCollider in hitColliders)
             {
-                if (hitCollider.CompareTag("Block")) {
+                if (hitCollider.CompareTag(GameController.BLOCK_GAME_OBJECT_TAG)) 
+                {
                     hitCollider.GetComponent<Block>().DestroyBlock();
                 }
-                if (hitCollider.CompareTag("Player")) {
-                    if(!isPlayerHit)
+
+                if (hitCollider.CompareTag(GameController.PLAYER_GAME_OBJECT_TAG)) 
+                {
+                    if(!_isPlayerHit)
                     {
-                        isPlayerHit = true;
+                        _isPlayerHit = true;
                         GameObject.Find("Game Controller").GetComponent<GameController>().GameOver();
                     }
-                    
                 }
             }
         }
@@ -54,25 +53,24 @@ public class FireSrike : MonoBehaviour
     private IEnumerator ExplosionDamage(float interval)
     {
         yield return new WaitForSeconds(interval);
-        hitSound.Play();
-        canDamage = true;
+        _hitSound.Play();
+        _canDamage = true;
     }
+
     private IEnumerator StopDamage(float interval)
     {
         yield return new WaitForSeconds(interval);
-        canDamage = false;
+        _canDamage = false;
     }
 
     private IEnumerator StopMove(float interval)
     {
         yield return new WaitForSeconds(interval);
-        canMove = false;
+        _canMove = false;
     }
 
     public void DontMove()
     {
-        canMove = false;
+        _canMove = false;
     }
-
-
 }

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2409260847699707894}
   - component: {fileID: -43848560143270573}
   m_Layer: 0
-  m_Name: Ice Border1
+  m_Name: Ice Border 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

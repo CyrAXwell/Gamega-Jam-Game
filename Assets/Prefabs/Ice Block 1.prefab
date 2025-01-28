@@ -98,7 +98,7 @@ GameObject:
   - component: {fileID: -3180595673773450011}
   - component: {fileID: -6520912424370334042}
   m_Layer: 0
-  m_Name: Ice Block1
+  m_Name: Ice Block 1
   m_TagString: Block
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -210,9 +210,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0653925b43577714ea93b0ad6e776761, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  brokenBlock: {fileID: 2475562505654689598}
-  anim: {fileID: -6520912424370334042}
-  brokenEffect: {fileID: 7892958710651432244, guid: f6b7a7e30c215f54e8de36e108c7274e, type: 3}
+  _brokenBlock: {fileID: 2475562505654689598}
+  _animator: {fileID: -6520912424370334042}
+  _brokenEffect: {fileID: 7892958710651432244, guid: f6b7a7e30c215f54e8de36e108c7274e, type: 3}
 --- !u!95 &-6520912424370334042
 Animator:
   serializedVersion: 4

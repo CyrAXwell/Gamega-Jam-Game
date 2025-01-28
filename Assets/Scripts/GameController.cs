@@ -1,32 +1,35 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using TMPro;
 
 public class GameController : MonoBehaviour
 {
-    [SerializeField] private GameObject pauseMenu;
-    [SerializeField] private Image scoreBackground;
-    private bool isGameOver = false;
-    [SerializeField] private GameObject gameOverMenu;
-    [SerializeField] AudioSource gameOverSound;
+    public const string BLOCK_GAME_OBJECT_TAG = "Block";
+    public const string PLAYER_GAME_OBJECT_TAG = "Player";
 
-    void Start()
+    [SerializeField] private GameObject _pauseMenu;
+    [SerializeField] private Image _scoreBackground;
+    [SerializeField] private GameObject _gameOverMenu;
+    [SerializeField] AudioSource _gameOverSound;
+
+    private bool _isGameOver = false;
+
+    private void Start()
     {
         Time.timeScale = 1f;
-        StateNameController.isPaused = false; 
+        StateNameController.IsGamePaused = false; 
     }
 
-    void Update()
+    private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Escape) && !isGameOver)
+        if(Input.GetKeyDown(KeyCode.Escape) && !_isGameOver)
         {
-            if(StateNameController.isPaused)
+            if(StateNameController.IsGamePaused)
             {
                 Resume();
-            }else{
+            }
+            else
+            {
                 Pause();
             }
         }
@@ -34,20 +37,20 @@ public class GameController : MonoBehaviour
 
     public void Resume()
     {
-        pauseMenu.SetActive(false);
-        scoreBackground.enabled = true;
+        _pauseMenu.SetActive(false);
+        _scoreBackground.enabled = true;
+
         Time.timeScale = 1f;
-        StateNameController.isPaused = false; 
-        
+        StateNameController.IsGamePaused = false; 
     }
 
     public void Pause()
     {
-        pauseMenu.SetActive(true);
-        scoreBackground.enabled = false;
+        _pauseMenu.SetActive(true);
+        _scoreBackground.enabled = false;
+
         Time.timeScale = 0f;
-        StateNameController.isPaused = true; 
-        
+        StateNameController.IsGamePaused = true; 
     }
 
     public void Quit()
@@ -63,23 +66,24 @@ public class GameController : MonoBehaviour
 
     public void GameOverRetry()
     {
-        isGameOver = false;
+        _isGameOver = false;
         SceneManager.LoadScene(2);
     }
 
     public void GameOver()
     {
-        if(!isGameOver)
+        if(!_isGameOver)
         {
-            gameOverSound.Play();
-            isGameOver = true;
+            _isGameOver = true;
             Time.timeScale = 0f;
-            StateNameController.isPaused = true; 
-            gameOverMenu.SetActive(true);
-            scoreBackground.gameObject.GetComponent<RectTransform>().anchoredPosition  = new Vector3(836f, -300f, 0f);
-            scoreBackground.enabled = false;
-        }
-        
-    }
+            StateNameController.IsGamePaused = true; 
 
+            _scoreBackground.gameObject.GetComponent<RectTransform>().anchoredPosition  = new Vector3(836f, -300f, 0f);
+            _scoreBackground.enabled = false;
+
+            _gameOverMenu.SetActive(true);
+            _gameOverSound.Play();
+            
+        }
+    }
 }

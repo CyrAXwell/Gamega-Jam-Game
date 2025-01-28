@@ -1,51 +1,44 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Block : MonoBehaviour
 {
-    [SerializeField] private GameObject brokenBlock;
-    [SerializeField] private Animator anim;
-    [SerializeField] private GameObject brokenEffect;
+    private const string RESTORE_ANIM_TRIGGER = "Restore";
+    private const string STOP_RESTORE_ANIM_TRIGGER = "Stop Restore";
 
-    void Start()
+    [SerializeField] private GameObject _brokenBlock;
+    [SerializeField] private GameObject _brokenEffect;
+    [SerializeField] private Animator _animator;
+
+    private void Start()
     {
-        brokenBlock.SetActive(false);
-        
-        //brokenBlock.GetComponent<SpriteRenderer>().enabled = false;
-        //gameObject.transform.GetChild(0);
+        _brokenBlock.SetActive(false);
     }
 
     public void DestroyBlock()
     {
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
         gameObject.GetComponent<BoxCollider2D>().enabled = false;
-        brokenBlock.SetActive(true);
+        _brokenBlock.SetActive(true);
 
-        GameObject effect = Instantiate(brokenEffect, gameObject.transform.position, Quaternion.identity);
+        GameObject effect = Instantiate(_brokenEffect, gameObject.transform.position, Quaternion.identity);
         Destroy(effect, 1f);
         StartCoroutine(StartRestoreAnimation(2f));
         StartCoroutine(RestoreBlock(3f));
-        //Debug.Log(gameObject.name);
-        
-        
     }
 
     private IEnumerator StartRestoreAnimation(float interval)
     {
         yield return new WaitForSeconds(interval);
-        brokenBlock.SetActive(false);
+        _brokenBlock.SetActive(false);
         gameObject.GetComponent<SpriteRenderer>().enabled = true;
-        anim.SetTrigger("Restore");
-
+        _animator.SetTrigger(RESTORE_ANIM_TRIGGER);
     }
 
     private IEnumerator RestoreBlock(float interval)
     {
         yield return new WaitForSeconds(interval);
-        anim.SetTrigger("Stop Restore");
-        //gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        _animator.SetTrigger(STOP_RESTORE_ANIM_TRIGGER);
         gameObject.GetComponent<BoxCollider2D>().enabled = true;
-
     }
 }
